@@ -1,0 +1,3 @@
+[submodule "com.unity.purchasing"]
+	path = com.unity.purchasing
+	url = https://github.com/manjav/com.unity.purchasing
