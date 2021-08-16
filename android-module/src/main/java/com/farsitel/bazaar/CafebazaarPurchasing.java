@@ -50,6 +50,7 @@ public class CafebazaarPurchasing {
     }
 
     public void RetrieveProducts(String json) {
+        poolakey.retrieveProducts(json);
     }
 
     public void Purchase(String productJSON, String developerPayload) {
