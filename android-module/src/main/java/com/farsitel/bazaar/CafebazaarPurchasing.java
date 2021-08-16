@@ -7,8 +7,18 @@ import android.util.Log;
 
 import com.unity.purchasing.common.IStoreCallback;
 import com.unity.purchasing.common.IUnityCallback;
+import com.unity.purchasing.common.ProductDefinition;
+import com.unity.purchasing.common.ProductType;
+import com.unity.purchasing.common.PurchaseFailureDescription;
+import com.unity.purchasing.common.PurchaseFailureReason;
 import com.unity.purchasing.common.UnityPurchasing;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Field;
+import java.util.HashMap;
+
 public class CafebazaarPurchasing {
     public static String TAG = "FarsiSell";
     public static PoolakeyBridge poolakey;
@@ -78,6 +88,11 @@ public class CafebazaarPurchasing {
     }
 
     static public void onPurchaseSucceeded(String productId, String receipt, String transactionId) {
+        ProductDefinition product = poolakey.getDefinedProduct(productId);
+        if (product.type.equals(ProductType.Consumable)) {
+            poolakey.consume(productId, receipt, transactionId);
+            return;
+        }
         unityCallback.OnPurchaseSucceeded(productId, receipt, transactionId);
     }
 

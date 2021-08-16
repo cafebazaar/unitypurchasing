@@ -206,4 +206,8 @@ class PoolakeyBridge(context: Context, private val unityCallback: IStoreCallback
             }
         }
     }
+
+    fun getDefinedProduct(id: String): ProductDefinition? {
+        return definedProducts.find { p -> p.id == id }
+    }
 }
