@@ -55,9 +55,30 @@ public class CafebazaarPurchasing {
 
     public void Purchase(String productJSON, String developerPayload) {
         log("Purchase " + productJSON);
+        ProductDefinition product = null;
+        try {
+            JSONObject json = new JSONObject(productJSON);
+            product = new ProductDefinition(
+                    json.getString("storeSpecificId"),
+                    ProductType.valueOf(json.getString("type")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            PurchaseFailureDescription description = new PurchaseFailureDescription("", PurchaseFailureReason.BillingUnavailable, "Json is invalid.", "");
+            CafebazaarPurchasing.unityCallback.OnPurchaseFailed(description);
+            return;
+        }
+
+        PaymentActivity.start(
+                getActivity(),
+                product.type == ProductType.Subscription ? PaymentActivity.Command.Subscribe : PaymentActivity.Command.Purchase,
+                product.id,
+                developerPayload,
+                null
+        );
     }
 
     static public void onPurchaseSucceeded(String productId, String receipt, String transactionId) {
+        unityCallback.OnPurchaseSucceeded(productId, receipt, transactionId);
     }
 
     public void FinishTransaction(String productJSON, String transactionID) {

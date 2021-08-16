@@ -8,10 +8,17 @@ import ir.cafebazaar.poolakey.ConnectionState
 import ir.cafebazaar.poolakey.Payment
 import ir.cafebazaar.poolakey.config.PaymentConfiguration
 import ir.cafebazaar.poolakey.config.SecurityCheck
+import ir.cafebazaar.poolakey.entity.PurchaseInfo
+import ir.cafebazaar.poolakey.entity.SkuDetails
+import org.json.JSONArray
+import org.json.JSONObject
+import java.math.BigDecimal
 import java.util.*
+import kotlin.collections.HashMap
 
 class PoolakeyBridge(context: Context, private val unityCallback: IStoreCallback) {
 
+    lateinit var definedProducts: MutableList<ProductDefinition>
     lateinit var payment: Payment
     lateinit var connection: Connection
     var isConnected: Boolean = false
