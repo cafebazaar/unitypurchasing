@@ -44,6 +44,9 @@ public class CafebazaarPurchasing {
 
     public CafebazaarPurchasing(IStoreCallback callback) {
         unityCallback = callback;
+        Context context = getActivity().getApplicationContext();
+        poolakey = new PoolakeyBridge(context, unityCallback);
+        poolakey.connect(context, null);
     }
 
     public void RetrieveProducts(String json) {
