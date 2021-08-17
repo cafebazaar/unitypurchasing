@@ -63,9 +63,9 @@ task createJar(type: Copy) {
 }
 task updateAAR(type: Copy) {
     from('build/outputs/aar')
-    into('../Purchasing-unity/Assets/IAP/Plugins/UnityPurchasing/Android/')
+    into('../unity-sample/Assets/CafebazaarPurchasing/Plugins/UnityPurchasing/Android/')
     include(project.name + '-release.aar')
-//    rename(project.name + '-release.aar', 'cafebazaar-' + poolakey_version + '.aar')
+    rename(project.name + '-release.aar', 'cafebazaar-' + poolakey_version + '.aar')
 }
 
 project.tasks.whenTaskAdded { Task theTask ->
