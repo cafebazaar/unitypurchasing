@@ -22,7 +22,8 @@ namespace UnityEditor.Purchasing
             AmazonApps.Name,
             MacAppStore.Name,
             WindowsStore.Name,
-            UDP.Name
+            UDP.Name,
+            Cafebazaar.Name
         };
 
         /// <summary>

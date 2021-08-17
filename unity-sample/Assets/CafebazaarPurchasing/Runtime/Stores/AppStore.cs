@@ -41,6 +41,11 @@
         WinRT,
 
         /// <summary>
+        /// Cafebazaar App Store.
+        /// </summary>
+        Cafebazaar,
+
+        /// <summary>
         /// A fake store used for testing and Play-In-Editor.
         /// </summary>
         fake

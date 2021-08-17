@@ -43,7 +43,8 @@ namespace UnityEngine.Purchasing
             { AppStore.AmazonAppStore, AmazonApps.Name },
             { AppStore.GooglePlay, GooglePlay.Name },
             { AppStore.UDP, UDP.Name},
-            { AppStore.NotSpecified, GooglePlay.Name }
+            { AppStore.NotSpecified, GooglePlay.Name },
+            { AppStore.Cafebazaar, Cafebazaar.Name }
         };
 
         internal class StoreInstance
