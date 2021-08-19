@@ -6,3 +6,6 @@
 Import latest unity package from releases section.
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Unity-package.png?raw=true"/><br/>
+
+### Step 2 - Choose android platform:
+<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Choose-platform.png?raw=true"/><br/>
