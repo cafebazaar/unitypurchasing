@@ -21,4 +21,12 @@ Add `IAP Button` to scene then select. In inspector click on `IAP Catalog...` to
 
 ### Step 5 - Add Product Item :
 You can override title, description and override sku for every store.
+
+<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Catalog-fill.png?raw=true"/><br/>
+
+### Step 6 - Fill button inspector :
+1. Select SKU.
+2. Assign title, description and price texts.
+3. Delegate purchase complete/failure method.
+
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Catalog-fill.png?raw=true"/><br/>
