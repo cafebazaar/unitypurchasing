@@ -31,7 +31,7 @@ You can override title, description and override sku for every store.
 2. Assign title, description and price texts.
 3. Delegate purchase complete/failure method.
 
-<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Catalog-fill.png?raw=true"/><br/><br/>
+<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Button-setup.png?raw=true"/><br/><br/>
 
 ### Step 7 :
 Override packagename in Edit -> Project Settings -> Player -> Other Settings
