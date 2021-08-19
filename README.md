@@ -18,3 +18,7 @@ Import latest unity package from releases section.
 Add `IAP Button` to scene then select. In inspector click on `IAP Catalog...` to appears IAP Catalog panel.
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Button-add.png?raw=true"/><img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Button-inspector.png?raw=true"/><img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Catalog.png?raw=true"/>
+
+### Step 5 - Add Product Item :
+You can override title, description and override sku for every store.
+<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Catalog-fill.png?raw=true"/><br/>
