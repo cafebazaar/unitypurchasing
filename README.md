@@ -12,3 +12,6 @@ Import latest unity package from releases section.
 
 ### Step 3 - Enable Android Auto-resulotion :
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Auto-resulotion.png?raw=true"/><br/>
+
+### Step 4 - Add IAP Button to scene :
+<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/main/images/Button-add.png?raw=true"/><br/>
