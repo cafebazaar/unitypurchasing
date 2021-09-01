@@ -4,24 +4,47 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.BillingClientStateListener;
+import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.Purchase;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.unity.purchasing.common.IStoreCallback;
 import com.unity.purchasing.common.IUnityCallback;
+import com.unity.purchasing.common.InitializationFailureReason;
 import com.unity.purchasing.common.ProductDefinition;
+import com.unity.purchasing.common.ProductDescription;
+import com.unity.purchasing.common.ProductMetadata;
 import com.unity.purchasing.common.ProductType;
 import com.unity.purchasing.common.PurchaseFailureDescription;
 import com.unity.purchasing.common.PurchaseFailureReason;
 import com.unity.purchasing.common.UnityPurchasing;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class CafebazaarPurchasing {
+public class CafebazaarPurchasing implements PurchasesResponseListener, BillingClientStateListener,
+        SkuDetailsResponseListener, PurchasesUpdatedListener {
+
     public static String TAG = "FarsiSell";
     public static IStoreCallback unityCallback;
     private static CafebazaarPurchasing instance;
+
+    private final BillingClient billingClient;
+    private String pendingJsonProducts = null;
+    private Map<String, SkuDetails> skusDetails;
+    private Map<String, ProductDefinition> definedProducts;
 
     public static void log(String message) {
         Log.i(TAG, message);
@@ -75,7 +98,82 @@ public class CafebazaarPurchasing {
     }
 
     public void RetrieveProducts(String json) {
+        pendingJsonProducts = json;
+        if (!billingClient.isReady) {
+            unityCallback.OnSetupFailed(InitializationFailureReason.NoProductsAvailable);
+            return;
+        }
 
+        // Create defined products
+        List<String> skusList = new ArrayList<>();
+        definedProducts = new HashMap<>();
+        try {
+            JSONArray jsonArray = new JSONArray(pendingJsonProducts);
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                JSONObject value = jsonArray.getJSONObject(i);
+                ProductDefinition product = new ProductDefinition(value.getString("storeSpecificId"),
+                        ProductType.valueOf(value.getString("type")));
+                definedProducts.put(product.id, product);
+                skusList.add(product.id);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pendingJsonProducts = null;
+
+        // Query SkuDetails
+        SkuDetailsParams params = SkuDetailsParams.newBuilder().setSkusList(skusList).setType(null).build();
+        billingClient.querySkuDetailsAsync(params, this);
+    }
+
+    @Override
+    public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> skusList) {
+        if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
+            unityCallback.OnSetupFailed(InitializationFailureReason.NoProductsAvailable);
+            return;
+        }
+        skusDetails = new HashMap<>();
+        for (SkuDetails skuDetails : skusList) {
+            skusDetails.put(skuDetails.getSku(), skuDetails);
+        }
+
+        // Query Purchases
+        billingClient.queryPurchasesAsync(null, this);
+    }
+
+    @Override
+    public void onPurchasesResponse(BillingResult billingResult, List<Purchase> purchases) {
+        if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
+            unityCallback.OnSetupFailed(InitializationFailureReason.NoProductsAvailable);
+            return;
+        }
+
+        HashMap<String, Purchase> purchasesMap = new HashMap<String, Purchase>();
+        for (Purchase purchase : purchases) {
+            purchasesMap.put(purchase.getSkus().get(0), purchase);
+        }
+
+        List<ProductDescription> productDescriptions = new ArrayList<>();
+        for (Map.Entry<String, SkuDetails> entry : skusDetails.entrySet()) {
+            ProductMetadata metadata = new ProductMetadata(
+                    entry.getValue().getPrice(),
+                    entry.getValue().getTitle(),
+                    entry.getValue().getDescription(),
+                    "IRR",
+                    new BigDecimal(parsePrice(entry.getValue().getPrice()))
+            );
+            String receipt = "";
+            String transactionId = "";
+            Purchase purchase = purchasesMap.get(entry.getKey());
+            if (purchase != null) {
+                receipt = purchase.getPurchaseToken();
+                transactionId = purchase.getOrderId();
+            }
+            productDescriptions.add(new ProductDescription(entry.getKey(), metadata, receipt, transactionId));
+        }
+
+        unityCallback.OnProductsRetrieved(productDescriptions);
+    }
     }
 
     public void Purchase(String productJSON, String developerPayload) {
