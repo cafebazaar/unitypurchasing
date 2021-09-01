@@ -1,2 +1,2 @@
 include ':common'
-rootProject.name = "poolakeyunitybridge"
+rootProject.name = "unitypurchasing"
