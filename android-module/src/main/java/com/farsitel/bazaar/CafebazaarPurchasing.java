@@ -2,7 +2,6 @@ package com.farsitel.bazaar;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.unity.purchasing.common.IStoreCallback;
@@ -21,7 +20,6 @@ import java.util.HashMap;
 
 public class CafebazaarPurchasing {
     public static String TAG = "FarsiSell";
-    public static PoolakeyBridge poolakey;
     public static IStoreCallback unityCallback;
     private static CafebazaarPurchasing instance;
 
@@ -55,12 +53,10 @@ public class CafebazaarPurchasing {
     public CafebazaarPurchasing(IStoreCallback callback) {
         unityCallback = callback;
         Context context = getActivity().getApplicationContext();
-        poolakey = new PoolakeyBridge(context, unityCallback);
-        poolakey.connect(context, null);
     }
 
     public void RetrieveProducts(String json) {
-        poolakey.retrieveProducts(json);
+
     }
 
     public void Purchase(String productJSON, String developerPayload) {
@@ -77,24 +73,8 @@ public class CafebazaarPurchasing {
             CafebazaarPurchasing.unityCallback.OnPurchaseFailed(description);
             return;
         }
-
-        PaymentActivity.start(
-                getActivity(),
-                product.type == ProductType.Subscription ? PaymentActivity.Command.Subscribe : PaymentActivity.Command.Purchase,
-                product.id,
-                developerPayload,
-                null
-        );
     }
 
-    static public void onPurchaseSucceeded(String productId, String receipt, String transactionId) {
-        ProductDefinition product = poolakey.getDefinedProduct(productId);
-        if (product.type.equals(ProductType.Consumable)) {
-            poolakey.consume(productId, receipt, transactionId);
-            return;
-        }
-        unityCallback.OnPurchaseSucceeded(productId, receipt, transactionId);
-    }
 
     public void FinishTransaction(String productJSON, String transactionID) {
         log("Finishing transaction " + transactionID);
