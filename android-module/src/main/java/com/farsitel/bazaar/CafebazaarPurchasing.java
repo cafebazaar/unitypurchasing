@@ -53,6 +53,25 @@ public class CafebazaarPurchasing {
     public CafebazaarPurchasing(IStoreCallback callback) {
         unityCallback = callback;
         Context context = getActivity().getApplicationContext();
+
+        billingClient = BillingClient.newBuilder(getActivity().getApplication()).setListener(this).enablePendingPurchases().build();
+        billingClient.startConnection(this);
+    }
+
+    @Override
+    public void onBillingServiceDisconnected() {
+        log("onBillingServiceDisconnected");
+        unityCallback.OnSetupFailed(InitializationFailureReason.PurchasingUnavailable);
+    }
+
+    @Override
+    public void onBillingSetupFinished(BillingResult billingResult) {
+        int responseCode = billingResult.getResponseCode();
+        String debugMessage = billingResult.getDebugMessage();
+        log("onBillingSetupFinished: " + responseCode + " " + debugMessage);
+
+        if (pendingJsonProducts != null)
+            RetrieveProducts(pendingJsonProducts);
     }
 
     public void RetrieveProducts(String json) {
