@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation project(":common")
+    implementation project(":bazaarbilling")
 }
 
 task deleteJar(type: Delete) {
