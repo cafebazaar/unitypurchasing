@@ -5,5 +5,8 @@
         <package android:name="com.farsitel.bazaar" />
     </queries>
     <uses-permission android:name="com.farsitel.bazaar.permission.PAY_THROUGH_BAZAAR" />
-
+    <application>
+        <activity android:name="com.android.wrapper.WrapperBillingActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    </application>
 </manifest>
