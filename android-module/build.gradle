@@ -23,14 +23,11 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdk 30
 
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        minSdk 17
+        targetSdk 30
     }
 
     compileOptions
@@ -46,15 +43,6 @@ dependencies {
     implementation project(":bazaarbilling")
 }
 
-task deleteJar(type: Delete) {
-    delete 'Poolakey.jar'
-}
-task createJar(type: Copy) {
-    from('build/intermediates/packaged-classes/release/')
-    into('build')
-    include('classes.jar')
-    rename('classes.jar', 'Poolakey.jar')
-}
 task updateAAR(type: Copy) {
     from('build/outputs/aar')
     into('../unity-sample/Assets/CafebazaarPurchasing/Plugins/UnityPurchasing/Android/')
