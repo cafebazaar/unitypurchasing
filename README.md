@@ -33,7 +33,19 @@ Override packagename in Edit -> Project Settings -> Player -> Other Settings
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Override-packagename.png?raw=true"/><br/><br/>
 
 ### Step 6 :
-Select your store: Open BillingMode file in Resources and change `androidStore` from `Google` to `Cafebazaar` or another stores.
+Select your store: Open `BillingMode` file in Resources and change `androidStore` from `Google` to `Cafebazaar` or another stores.
 ```
 {"androidStore":"Cafebazaar"}
 ```
+<br/>
+
+***
+
+<br/>
+<b>Older Unity versions :</b>
+
+If you  use unity 2019 and older versions, find and open `bazaar-purchasing-x.x.x.aar`, then remove `queries` node in `AndroidManifest.xml`.
+<br/><br/>
+><b>Attention!</b>
+>
+> Keep in mind, builds in these versions not support android 11+ devices.
