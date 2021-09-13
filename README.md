@@ -14,6 +14,9 @@ Add `IAP Button` to the scene and then select. In inspector click on `IAP Catalo
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Button-add.png?raw=true"/><img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Button-inspector.png?raw=true"/><img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Catalog.png?raw=true"/><br/><br/>
 
 ### Step 3 - Add Product Item :
+1. Check automaticlly initialize ...
+2. Select ID and type of product.
+3. You can override title, description and override ID for every store.
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Catalog-fill.png?raw=true"/><br/><br/>
 
