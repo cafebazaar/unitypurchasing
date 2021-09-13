@@ -8,14 +8,6 @@ Import latest unity package from [releases](https://github.com/manjav/unitypurch
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Unity-package.png?raw=true"/><br/><br/>
 
-### Step 2 (Choose platform): 
-<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Choose-platform.png?raw=true"/><br/><br/>
-
-### Step 3 :
-Enable Android Auto-resulotion
-
-<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Auto-resulotion.png?raw=true"/><br/><br/>
-
 ### Step 4 :
 Add `IAP Button` to scene then select. In inspector click on `IAP Catalog...` to appears IAP Catalog panel.
 
