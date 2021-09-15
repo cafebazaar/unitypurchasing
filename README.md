@@ -22,12 +22,12 @@ Import latest unity package from [releases](https://github.com/manjav/unitypurch
 8. Delegate purchase complete/failure method.
 <br/><br/>
 
-### Step 3 :
+### Step 3 - Insert packagename:
 Override packagename in Edit -> Project Settings -> Player -> Other Settings
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Override-packagename.png?raw=true"/><br/><br/>
 
-### Step 4 :
+### Step 4 - Select store:
 Select your store: Open `BillingMode` file in Resources and change `androidStore` from `Google` to `Cafebazaar` or other stores.
 ```
 {"androidStore":"Cafebazaar"}
