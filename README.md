@@ -17,7 +17,7 @@ Import latest unity package from [releases](https://github.com/manjav/unitypurch
 3. Add products to IAP Catalog (You can override title, description and override ID for every store).
 4. Enable automaticlly initialize ...
 5. Close IAP Catalog panel.
-6. Select ID and type of product.
+6. Select ID and type of product (It needs to define products in [Pishkhan](https://pishkhan.cafebazaar.ir) and use their own ID).
 7. Assign title, description and price texts.
 8. Delegate purchase complete/failure method.
 <br/><br/>
