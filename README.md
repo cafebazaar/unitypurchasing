@@ -2,37 +2,32 @@
 
 
 
-### Step 1 :
+### Step 1 - Import package:
 Import latest unity package from [releases](https://github.com/manjav/unitypurchasing-cafebazaar/releases) section.
 
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Unity-package.png?raw=true"/><br/><br/>
 
-### Step 2 :
-Add `IAP Button` to the scene and then select. In inspector click on `IAP Catalog...` to appears IAP Catalog panel.
+### Step 2 - Add IAP Buttons:
+ 
+<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Add-IAPButton.webp?raw=true"/>
 
-<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Button-add.png?raw=true"/><img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Button-inspector.png?raw=true"/><img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Catalog.png?raw=true"/><br/><br/>
+1. Add `IAP Button` to the scene and then select.
+2. In inspector click on `IAP Catalog...` to appears IAP Catalog panel.
+3. Add products to IAP Catalog (You can override title, description and override ID for every store).
+4. Check automaticlly initialize ...
+5. Close IAP Catalog panel.
+6. Select ID and type of product.
+7. Assign title, description and price texts.
+8. Delegate purchase complete/failure method.
+<br/><br/>
 
-### Step 3 - Add Product Item :
-1. Check automaticlly initialize ...
-2. Select ID and type of product.
-3. You can override title, description and override ID for every store.
-
-<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Catalog-fill.png?raw=true"/><br/><br/>
-
-### Step 4 (Button setup) :
-1. Select SKU.
-2. Assign title, description and price texts.
-3. Delegate purchase complete/failure method.
-
-<img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Button-setup.png?raw=true"/><br/><br/>
-
-### Step 5 :
+### Step 3 :
 Override packagename in Edit -> Project Settings -> Player -> Other Settings
 
 <img src="https://github.com/manjav/unitypurchasing-cafebazaar/blob/master/images/Override-packagename.png?raw=true"/><br/><br/>
 
-### Step 6 :
+### Step 4 :
 Select your store: Open `BillingMode` file in Resources and change `androidStore` from `Google` to `Cafebazaar` or another stores.
 ```
 {"androidStore":"Cafebazaar"}
