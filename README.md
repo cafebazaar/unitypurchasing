@@ -14,12 +14,14 @@ Import latest unity package from [releases](https://github.com/manjav/unitypurch
 
 1. Add `IAP Button` to the scene and then select.
 2. In inspector click on `IAP Catalog...` to appears IAP Catalog panel.
-3. Add products to IAP Catalog (You can override title, description and override ID for every store).
-4. Enable automaticlly initialize ...
-5. Close IAP Catalog panel.
-6. Select ID and type of product (It needs to define products in [Pishkhan](https://pishkhan.cafebazaar.ir) and use their own ID).
-7. Assign title, description and price texts.
-8. Delegate purchase complete/failure method.
+3. Add first product (It needs to define products in [Pishkhan](https://pishkhan.cafebazaar.ir) and use their own ID)
+4. Override title, description (optional).
+5. Override ID for every store (optional - If your products ID are not the same in different stores).
+6. Enable automaticlly initialize ...
+7. Close IAP Catalog panel.
+8. Select ID and type of product.
+9. Assign title, description and price texts.
+10. Delegate purchase complete/failure method.
 <br/><br/>
 
 ### Step 3 - Insert packagename:
