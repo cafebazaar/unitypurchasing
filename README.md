@@ -45,7 +45,7 @@ Select your store: Open `BillingMode` file in Resources and change `androidStore
 <br/>
 <b>Older Unity versions :</b>
 
-If you  use unity 2019 and older versions, find and open `bazaar-purchasing-x.x.x.aar`, then remove `queries` node in `AndroidManifest.xml`.
+If you use unity 2019 and older versions, find and open `bazaar-billing-x.x.x.aar`, then remove `queries` node in `AndroidManifest.xml`.
 <br/><br/>
 ><b>Attention!</b>
 >
