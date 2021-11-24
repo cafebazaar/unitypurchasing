@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CafebazaarPurchasing implements PurchasesResponseListener, BillingClientStateListener,
         SkuDetailsResponseListener, PurchasesUpdatedListener {
@@ -192,7 +193,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
             return;
         }
         BillingResult billingResult = billingClient.launchBillingFlow(getActivity(),
-                BillingFlowParams.newBuilder().setSkuDetails(skusDetails.get(product.id)).build());
+                BillingFlowParams.newBuilder().setSkuDetails(Objects.requireNonNull(skusDetails.get(product.id))).build());
         log("onPurchaseStarted: " + billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
     }
 
