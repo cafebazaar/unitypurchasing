@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CafebazaarPurchasing implements PurchasesResponseListener, BillingClientStateListener,
         SkuDetailsResponseListener, PurchasesUpdatedListener {
@@ -47,6 +48,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
     private final BillingClient billingClient;
     private String pendingJsonProducts = null;
     private Map<String, SkuDetails> skusDetails;
+    private HashMap<String, Purchase> purchasesMap;
     private Map<String, ProductDefinition> definedProducts;
 
     public static void log(String message) {
@@ -151,7 +153,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
             return;
         }
 
-        HashMap<String, Purchase> purchasesMap = new HashMap<String, Purchase>();
+        purchasesMap = new HashMap<>();
         for (Purchase purchase : purchases) {
             purchasesMap.put(purchase.getSkus().get(0), purchase);
         }
@@ -173,9 +175,58 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
                 transactionId = purchase.getOrderId();
             }
             productDescriptions.add(new ProductDescription(entry.getKey(), metadata, receipt, transactionId));
+            if (entry.getValue().getType().equals(ProductType.Consumable)) {
+                unityCallback.OnPurchaseSucceeded(entry.getKey(), purchase.getPurchaseToken(), purchase.getOrderId());
+            }
         }
 
         unityCallback.OnProductsRetrieved(productDescriptions);
+    }
+
+
+    public void Purchase(String productJSON, String developerPayload) {
+        log("Purchase " + productJSON);
+        ProductDefinition product = getProductFromJson(productJSON);
+        if (product == null) {
+            PurchaseFailureDescription description = new PurchaseFailureDescription("", PurchaseFailureReason.BillingUnavailable, "Json is invalid.", "");
+            CafebazaarPurchasing.unityCallback.OnPurchaseFailed(description);
+            return;
+        }
+        BillingResult billingResult = billingClient.launchBillingFlow(getActivity(),
+                BillingFlowParams.newBuilder().setSkuDetails(Objects.requireNonNull(skusDetails.get(product.id))).build());
+        log("onPurchaseStarted: " + billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
+    }
+
+    @Override
+    public void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
+        log("onPurchasesUpdated: " + billingResult.getResponseCode() + " " + purchases.toString());
+        if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
+            unityCallback.OnPurchaseFailed(new PurchaseFailureDescription(billingResult.getDebugMessage(), PurchaseFailureReason.Unknown));
+            return;
+        }
+        for (Purchase purchase : purchases) {
+//            if (!Security.verifyPurchase(purchase.getOriginalJson(), purchase.getSignature())) {
+//                Log.e(TAG, "Invalid signature on purchase. Check to make " +
+//                        "sure your public key is correct.");
+//                continue;
+//            }
+            purchasesMap.put(purchase.getSkus().get(0), purchase);
+            unityCallback.OnPurchaseSucceeded(purchase.getSkus().get(0), purchase.getPurchaseToken(), purchase.getOrderId());
+        }
+    }
+
+    public void FinishTransaction(String productJSON, String transactionID) {
+        log("Finishing transaction " + productJSON + " - " + transactionID);
+        ProductDefinition product = getProductFromJson(productJSON);
+        if (product == null || !product.type.equals(ProductType.Consumable)) {
+            return;
+        }
+        Purchase purchase = purchasesMap.get(product.id);
+                ConsumeParams consumeParams = ConsumeParams.newBuilder()
+                        .setPurchaseToken(purchase.getPurchaseToken()).build();
+                billingClient.consumeAsync(consumeParams, (consumeResult, outToken) -> {
+            log("Consume " + productJSON + " - " + consumeResult);
+                });
     }
 
     private String parsePrice(String price) {
@@ -196,9 +247,8 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
         return _price.equals("صفر") ? "0" : _price;
     }
 
-    public void Purchase(String productJSON, String developerPayload) {
-        log("Purchase " + productJSON);
-        ProductDefinition product = null;
+    private ProductDefinition getProductFromJson(String productJSON) {
+        ProductDefinition product;
         try {
             JSONObject json = new JSONObject(productJSON);
             product = new ProductDefinition(
@@ -206,42 +256,8 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
                     ProductType.valueOf(json.getString("type")));
         } catch (JSONException e) {
             e.printStackTrace();
-            PurchaseFailureDescription description = new PurchaseFailureDescription("", PurchaseFailureReason.BillingUnavailable, "Json is invalid.", "");
-            CafebazaarPurchasing.unityCallback.OnPurchaseFailed(description);
-            return;
+            return null;
         }
-        BillingResult billingResult = billingClient.launchBillingFlow(getActivity(),
-                BillingFlowParams.newBuilder().setSkuDetails(skusDetails.get(product.id)).build());
-        log("onPurchaseStarted: " + billingResult.getResponseCode() + " " + billingResult.getDebugMessage());
-    }
-
-    @Override
-    public void onPurchasesUpdated(BillingResult billingResult, List<Purchase> purchases) {
-        log("onPurchasesUpdated: " + billingResult.getResponseCode() + " " + purchases.toString());
-        if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-            unityCallback.OnPurchaseFailed(new PurchaseFailureDescription(billingResult.getDebugMessage(), PurchaseFailureReason.Unknown));
-            return;
-        }
-        for (Purchase purchase : purchases) {
-//            if (!Security.verifyPurchase(purchase.getOriginalJson(), purchase.getSignature())) {
-//                Log.e(TAG, "Invalid signature on purchase. Check to make " +
-//                        "sure your public key is correct.");
-//                continue;
-//            }
-            ProductDefinition product = definedProducts.get(purchase.getSkus().get(0));
-            if (product.type.equals(ProductType.Consumable)) {
-                ConsumeParams consumeParams = ConsumeParams.newBuilder()
-                        .setPurchaseToken(purchase.getPurchaseToken()).build();
-                billingClient.consumeAsync(consumeParams, (consumeResult, outToken) -> {
-                    unityCallback.OnPurchaseSucceeded(product.id, purchase.getPurchaseToken(), purchase.getOrderId());
-                });
-            } else {
-                unityCallback.OnPurchaseSucceeded(product.id, purchase.getPurchaseToken(), purchase.getOrderId());
-            }
-        }
-    }
-
-    public void FinishTransaction(String productJSON, String transactionID) {
-        log("Finishing transaction " + transactionID);
+        return product;
     }
 }
