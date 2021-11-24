@@ -178,34 +178,11 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
         unityCallback.OnProductsRetrieved(productDescriptions);
     }
 
-    private String parsePrice(String price) {
-        String[] pre = price.split(" ریال");
-        String _price = pre[0]
-                .replace(",", "")
-                .replace('٠', '0')
-                .replace('١', '1')
-                .replace('٢', '2')
-                .replace('٣', '3')
-                .replace('۴', '4')
-                .replace('۵', '5')
-                .replace('۶', '6')
-                .replace('٧', '7')
-                .replace('٨', '8')
-                .replace('٩', '9');
-
-        return _price.equals("صفر") ? "0" : _price;
-    }
 
     public void Purchase(String productJSON, String developerPayload) {
         log("Purchase " + productJSON);
-        ProductDefinition product = null;
-        try {
-            JSONObject json = new JSONObject(productJSON);
-            product = new ProductDefinition(
-                    json.getString("storeSpecificId"),
-                    ProductType.valueOf(json.getString("type")));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        ProductDefinition product = getProductFromJson(productJSON);
+        if (product == null) {
             PurchaseFailureDescription description = new PurchaseFailureDescription("", PurchaseFailureReason.BillingUnavailable, "Json is invalid.", "");
             CafebazaarPurchasing.unityCallback.OnPurchaseFailed(description);
             return;
@@ -243,5 +220,37 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
 
     public void FinishTransaction(String productJSON, String transactionID) {
         log("Finishing transaction " + transactionID);
+    }
+
+    private String parsePrice(String price) {
+        String[] pre = price.split(" ریال");
+        String _price = pre[0]
+                .replace(",", "")
+                .replace('٠', '0')
+                .replace('١', '1')
+                .replace('٢', '2')
+                .replace('٣', '3')
+                .replace('۴', '4')
+                .replace('۵', '5')
+                .replace('۶', '6')
+                .replace('٧', '7')
+                .replace('٨', '8')
+                .replace('٩', '9');
+
+        return _price.equals("صفر") ? "0" : _price;
+    }
+
+    private ProductDefinition getProductFromJson(String productJSON) {
+        ProductDefinition product;
+        try {
+            JSONObject json = new JSONObject(productJSON);
+            product = new ProductDefinition(
+                    json.getString("storeSpecificId"),
+                    ProductType.valueOf(json.getString("type")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return product;
     }
 }
