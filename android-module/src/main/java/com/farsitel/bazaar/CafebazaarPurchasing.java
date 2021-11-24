@@ -47,6 +47,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
     private final BillingClient billingClient;
     private String pendingJsonProducts = null;
     private Map<String, SkuDetails> skusDetails;
+    private HashMap<String, Purchase> purchasesMap;
     private Map<String, ProductDefinition> definedProducts;
 
     public static void log(String message) {
@@ -151,7 +152,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
             return;
         }
 
-        HashMap<String, Purchase> purchasesMap = new HashMap<String, Purchase>();
+        purchasesMap = new HashMap<>();
         for (Purchase purchase : purchases) {
             purchasesMap.put(purchase.getSkus().get(0), purchase);
         }
@@ -205,21 +206,23 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
 //                        "sure your public key is correct.");
 //                continue;
 //            }
-            ProductDefinition product = definedProducts.get(purchase.getSkus().get(0));
-            if (product.type.equals(ProductType.Consumable)) {
-                ConsumeParams consumeParams = ConsumeParams.newBuilder()
-                        .setPurchaseToken(purchase.getPurchaseToken()).build();
-                billingClient.consumeAsync(consumeParams, (consumeResult, outToken) -> {
-                    unityCallback.OnPurchaseSucceeded(product.id, purchase.getPurchaseToken(), purchase.getOrderId());
-                });
-            } else {
-                unityCallback.OnPurchaseSucceeded(product.id, purchase.getPurchaseToken(), purchase.getOrderId());
-            }
+            purchasesMap.put(purchase.getSkus().get(0), purchase);
+            unityCallback.OnPurchaseSucceeded(purchase.getSkus().get(0), purchase.getPurchaseToken(), purchase.getOrderId());
         }
     }
 
     public void FinishTransaction(String productJSON, String transactionID) {
-        log("Finishing transaction " + transactionID);
+        log("Finishing transaction " + productJSON + " - " + transactionID);
+        ProductDefinition product = getProductFromJson(productJSON);
+        if (product == null || !product.type.equals(ProductType.Consumable)) {
+            return;
+        }
+        Purchase purchase = purchasesMap.get(product.id);
+                ConsumeParams consumeParams = ConsumeParams.newBuilder()
+                        .setPurchaseToken(purchase.getPurchaseToken()).build();
+                billingClient.consumeAsync(consumeParams, (consumeResult, outToken) -> {
+            log("Consume " + productJSON + " - " + consumeResult);
+                });
     }
 
     private String parsePrice(String price) {
