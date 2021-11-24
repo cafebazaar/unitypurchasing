@@ -174,6 +174,9 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
                 transactionId = purchase.getOrderId();
             }
             productDescriptions.add(new ProductDescription(entry.getKey(), metadata, receipt, transactionId));
+            if (entry.getValue().getType().equals(ProductType.Consumable)) {
+                unityCallback.OnPurchaseSucceeded(entry.getKey(), purchase.getPurchaseToken(), purchase.getOrderId());
+            }
         }
 
         unityCallback.OnProductsRetrieved(productDescriptions);
