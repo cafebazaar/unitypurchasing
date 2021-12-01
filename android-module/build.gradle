@@ -46,7 +46,7 @@ dependencies {
 
 task updateAAR(type: Copy) {
    from('build/outputs/aar')
-   into('../unity-sample/Assets/CafebazaarPurchasing/Plugins/UnityPurchasing/Android/')
+   into('../unity-example/Assets/CafebazaarPurchasing/Plugins/UnityPurchasing/Android/')
    include(project.name + '-release.aar')
    rename(project.name + '-release.aar', 'bazaar-purchasing-' + build_version + '.aar')
 }
