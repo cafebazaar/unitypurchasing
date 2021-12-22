@@ -24,11 +24,11 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 30
+    compileSdk 29
 
     defaultConfig {
         minSdk 17
-        targetSdk 30
+        targetSdk 29
     }
 
     compileOptions
