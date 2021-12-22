@@ -1,5 +1,4 @@
-Restoring Transactions
-======================
+# Restoring Transactions
 
 When a user reinstalls your application they should be granted any Non-Consumable or renewable Subscription products they already own. App stores maintain a permanent record of each user's Non-Consumable and renewable Subscription products which Unity IAP can retrieve. Non-renewing subscriptions on Apple platforms cannot be restored. If you use non-renewing subscription products on Apple platforms, it is up to you to keep a record of the active subscriptions and sync the subscription between devices.
 

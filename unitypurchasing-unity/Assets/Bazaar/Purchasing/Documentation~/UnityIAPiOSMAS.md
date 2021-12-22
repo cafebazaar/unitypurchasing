@@ -1,4 +1,4 @@
-iOS & Mac App Stores
+Extensions and Configuration
 ====================
 
 Extended functionality
@@ -106,14 +106,12 @@ public class AppleSimulateAskToBuy : MonoBehaviour {
 
 When the purchase is approved or rejected, your store's normal `ProcessPurchase` or `OnPurchaseFailed` listener methods are invoked.
 
-###Transaction Receipts
+### Transaction Receipts
 Sometimes consumable Ask to Buy purchases don't show up in the App Receipt, in which case you cannot validate them using that receipt. However, iOS provides a Transaction Receipt that contains all purchases, including Ask to Buy. Access the most recent Transaction Receipt string for a given `Product` using `IAppleExtensions`. 
 
 **Note**: Transaction Receipts are not available for Mac builds. Requesting a Transaction Receipt on a Mac build results in an empty string.
 
 ```
-#if UNITY_PURCHASING
-
 using System;
 using UnityEngine;
 using UnityEngine.Purchasing;
@@ -194,8 +192,6 @@ public class AskToBuy : MonoBehaviour, IStoreListener
         Debug.Log ("Purchase deferred: " + item.definition.id);
     }
 }
-
-#endif // UNITY_PURCHASING
 ```
 
 Unlike App Receipts, you cannot validate Transaction Receipts locally. Instead, you must send the receipt string to a remote server for validation. If you already use a remote server to validate App Receipts, send Transaction Receipts to the same Apple endpoint, to receive a JSON response.
@@ -226,8 +222,8 @@ Example JSON response:
 }
 ```
 
-##Intercepting Apple promotional purchases
-Apple allows you to promote [in-game purchases](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/StoreKitGuide/PromotingIn-AppPurchases/PromotingIn-AppPurchases.html) through your app’s product page. Unlike conventional in-app purchases, Apple promotional purchases initiate directly from the App Store on iOS and tvOS. The App Store then launches your app to complete the transaction, or prompts the user to download the app if it isn’t installed. 
+## Intercepting Apple promotional purchases
+Apple allows you to promote [in-game purchases](https://developer.apple.com/app-store/promoting-in-app-purchases/#:~:text=inside%20your%20app.-,Overview,approved%20and%20ready%20to%20promote.&text=When%20a%20user%20doesn't,to%20download%20the%20app%20first.) through your app’s product page. Unlike conventional in-app purchases, Apple promotional purchases initiate directly from the App Store on iOS and tvOS. The App Store then launches your app to complete the transaction, or prompts the user to download the app if it isn’t installed. 
 
 The `IAppleConfiguration` `SetApplePromotionalPurchaseInterceptor` callback method intercepts Apple promotional purchases. Use this callback to present parental gates, send analytics events, or perform other functions before sending the purchase to Apple. The callback uses the `Product` that the user attempted to purchase. You must call `IAppleExtensions.ContinuePromotionalPurchases()` to continue with the promotional purchase. This will initiate any queued-up payments.
 
@@ -277,41 +273,3 @@ private IEnumerator ContinuePromotionalPurchases() {
 }
 
 ```
-
-Testing
--------
-
-To test on Apple stores you must be using an iTunes connect test account, which can be created in iTunes connect.
-
-Sign out of the App Store on the iOS device or laptop, launch your application and you will be prompted to log in when you attempt either a purchase or to restore transactions.
-
-If you receive an initialization failure with a reason of `NoProductsAvailable`, follow this checklist:
-
-* iTunes Connect product identifiers must exactly match the product identifiers supplied to Unity IAP
-* In-App purchases must be enabled for your application in iTunes Connect
-* Products must be cleared for sale in iTunes Connect
-* It may take many hours for newly created iTunes Connect products to be available for purchase
-* You must agree to the latest iTunes Connect developer agreements and have active bank details
-
-Mac App Store
--------------
-
-When building a desktop Mac build you must select `Mac App Store validation` within Unity’s build settings.
-
-Once you have built your App, you must update its info.plist file with your bundle identifier and version strings. Right click on the `.app` file and click `show package contents`, locate the `info.plist` file and update the `CFBundleIdentifier` string to your application's bundle identifier.
-
-You must then sign, package and install your application. You will need to run the following commands from an OSX terminal:
-
-````
-codesign -f --deep -s "3rd Party Mac Developer Application: " your.app/Contents/Plugins/unitypurchasing.bundle
-codesign -f --deep -s "3rd Party Mac Developer Application: " your.app
-productbuild --component your.app /Applications --sign "3rd Party Mac Developer Installer: " your.pkg
-````
-
-To sign the bundle, you may first need to remove the Contents.meta file if it exists: `your.app/Contents/Plugins/unitypurchasing.bundle/Contents.meta`
-
-In order to install the package correctly you must delete the unpackaged .app file before running the newly created package.
-
-You must then launch your App from the Applications folder. The first time you do so, you will be prompted to enter your iTunes account details, for which you should enter your iTunes Connect test user account login. You will then be able to make test purchases against the sandbox environment.
-
-

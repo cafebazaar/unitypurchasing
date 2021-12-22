@@ -1,5 +1,4 @@
-Processing Purchases
-====================
+# Processing Purchases
 
 The `ProcessPurchase` function of your store listener is called when a purchase completes. Your application should fulfil whatever the user has bought; for example, unlocking local content or sending purchase receipts to a server to update a server-side game model.
 

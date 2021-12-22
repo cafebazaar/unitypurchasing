@@ -1,41 +1,29 @@
-<!-- in Trello -->
-
-# Receipt validation
-
-Receipt validation helps you prevent users from accessing content they have not purchased.
-
-##Point of validation
-It is best practice to validate the receipt at the point where your application’s content is distributed.
-
-* **Local validation:** For client-side content, where all content is contained in the application and is enabled once purchased, the validation should take place on the target device, without the need to connect to a remote server. Unity IAP is designed to support local validation within your application. See __Local validation__ below for more information.
-* **Remote validation:** For server-side content, where content is downloaded once purchased, the validation should take place on the server before the content is released. Unity does not offer support for server-side validation; however, third-party solutions are available, such as Nobuyori Takahashi’s [IAP project](https://github.com/voltrue2/in-app-purchase).
-
-## Local validation
+# Receipt Obfuscation
 
 If the content that the user is purchasing already exists on the device, the application simply needs to make a decision about whether to unlock it.
 
-Unity IAP provides tools to help you hide content and to validate and parse receipts through Google Play and Apple stores.
+Unity IAP provides tools to help you hide unpurchased content and to validate and parse receipts through Google Play and Apple stores.
 
-### Obfuscating encryption keys
+## Obfuscating encryption keys
 
-Receipt validation is performed using known encryption keys. For your application, this is an encrypted Google Play public key, and/or Apple's root certificate.
+Receipt validation is performed using known encryption keys. For your application, this is an encrypted Google Play public key, and/or Apple's certificates.
 
 If a user can replace these, they can defeat your receipt validation checks, so it is important to make it difficult for a user to easily find and modify these keys.
 
-Unity IAP provides a tool that can help you obfuscate your encryption keys within your Application. This confuses or jumbles the keys so that it is much harder for a user to acces them. In the Unity menu bar, go to __Window__ > __Unity IAP__ > __IAP Receipt Validation Obfuscator__.
+Unity IAP provides a tool that can help you obfuscate your encryption keys within your Application. This confuses or jumbles the keys so that it is much harder for a user to acces them. In the Unity menu bar, go to __Services__ > __In-App Purchasing__ > __IAP Receipt Validation Obfuscator__.
 
 
 ![The Obfuscator window](images/IAPObfuscator.png)
 
-This window encodes both Apple's root certificate (which is bundled with Unity IAP) and your Google Play public key (from the application's [Google Play Developer Console's Services &amp; APIs](https://developer.android.com/google/play/licensing/setting-up.html) page) into two different C# files: __AppleTangle__ and __GooglePlayTangle__. These are added to your project for use in the next section.
+This window encodes Apple's root certificate, [StoreKit Test certificate](https://developer.apple.com/documentation/Xcode/setting-up-storekit-testing-in-xcode) (which are bundled with Unity IAP) and your Google Play public key (copied by you from the application's [Google Play Developer Console's Services &amp; APIs](https://developer.android.com/google/play/licensing/setting-up.html) page) into different C# classes: __AppleTangle__, __AppleStoreKitTestTangle__, and __GooglePlayTangle__. These are added to your project for use in the next section.
 
 Note that you do not have to provide a Google Play public key if you are only targeting Apple's stores, and vice versa.
 
-### Validating receipts
+## Validating receipts
 
 Use the `CrossPlatformValidator` class for validation across both Google Play and Apple stores.
 
-You must supply this class with either your Google Play public key or Apple's root certificate, or both if you wish to validate across both platforms.
+You must supply this class with either your Google Play public key or one of Apple's certificates, or both if you wish to validate across both platforms. Note that you cannot supply both Apple root and ["StoreKit Test"](https://developer.apple.com/documentation/Xcode/setting-up-storekit-testing-in-xcode)(*) certificates, and instead should pass only one, choosing that with a run-time or build-time switch.
 
 The `CrossPlatformValidator` performs two checks:
 
@@ -84,9 +72,54 @@ public PurchaseProcessingResult ProcessPurchase (PurchaseEventArgs e)
 
 ````
 
+### Choose an Apple certificate: Apple Root or StoreKit Test
+
+(*)  Unity IAP supports receipt validation of purchases made with the StoreKit Test store simulation. 
+
+Apple's Xcode 12 offers the ["StoreKit Test"](https://developer.apple.com/documentation/Xcode/setting-up-storekit-testing-in-xcode) suite of features for developers to more conveniently test IAP, without the need to use an Apple App Store Connect Sandbox configuration.
+
+Use the `AppleStoreKitTestTangle` class in place of the usual `AppleTangle` class, when constructing the `CrossPlatformValidator` for receipt validation. Note that both tangle classes are generated by the **Receipt Validation Obfuscator**. 
+
+````
+public PurchaseProcessingResult ProcessPurchase (PurchaseEventArgs e)
+{
+    bool validPurchase = true; 
+
+#if UNITY_ANDROID || UNITY_IOS || UNITY_STANDALONE_OSX
+    // Choose one Apple certificate. NOTE AppleStoreKitTestTangle requires
+    // the active Xcode Scheme set to use a StoreKit Configuration file.
+    // Here we use a symbol, defined either in code or Project Settings >
+    // Player > Scripting Define Symbols, to choose which Apple IAP system
+    // we intend to test with in Xcode, next.
+
+#if !DEBUG_STOREKIT_TEST
+    var validator = new CrossPlatformValidator(GooglePlayTangle.Data(),
+        AppleTangle.Data(), Application.bundleIdentifier);
+#else
+    var validator = new CrossPlatformValidator(GooglePlayTangle.Data(),
+        AppleStoreKitTestTangle.Data(), Application.bundleIdentifier);
+#endif
+
+    try {
+        validator.Validate(e.purchasedProduct.receipt);
+    } catch (IAPSecurityException) {
+        validPurchase = false;
+    }
+#endif
+
+    if (validPurchase) { }
+
+    return PurchaseProcessingResult.Complete;
+}
+
+````
+
+
+### Deep validation
+
 It is important you check not just that the receipt is valid, but also what information it contains. A common technique by users attempting to access content without purchase is to supply receipts from other products or applications. These receipts are genuine and do pass validation, so you should make decisions based on the product IDs parsed by the __CrossPlatformValidator__.
 
-### Store-specific details
+## Store-specific details
 
 Different stores have different fields in their purchase receipts. To access store-specific fields, `IPurchaseReceipt` can be downcast to two different subtypes: `GooglePlayReceipt` and `AppleInAppPurchaseReceipt`.
 
@@ -118,7 +151,7 @@ foreach (IPurchaseReceipt productReceipt in result) {
 }
 ````
 
-### Parsing raw Apple receipts
+## Parsing raw Apple receipts
 
 Use the `AppleValidator` class to extract detailed information about an Apple receipt. Note that this class only works with iOS App receipts from version 7.0 onwards, not Apple's deprecated transaction receipts.
 
@@ -140,5 +173,3 @@ foreach (AppleInAppPurchaseReceipt productReceipt in receipt.inAppPurchaseReceip
 ````
 
 The `AppleReceipt` type models Apple's ASN1 receipt format. See [Apple's documentation](https://developer.apple.com/library/ios/releasenotes/General/ValidateAppStoreReceipt/Chapters/ReceiptFields.html#/apple_ref/doc/uid/TP40010573-CH106-SW1) for an explanation of its fields.
-
-

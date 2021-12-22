@@ -1,4 +1,6 @@
-# Fetching products incrementally
+# Fetching Additional Products
+
+This step is optional.
 
 If your Application has a very large catalog of available products, you may find it takes too long to fetch them all in one batch.
 

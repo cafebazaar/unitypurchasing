@@ -27,10 +27,10 @@ namespace UnityEditor.Purchasing
 
         GoogleObfuscatorSection m_ObfuscatorSection;
 
-        internal GooglePlayConfigurationSettingsBlock(GoogleConfigurationData remoteData)
+        internal GooglePlayConfigurationSettingsBlock()
         {
-            m_GooglePlayDataRef = remoteData;
-            m_WebRequests = new GoogleConfigurationWebRequests(remoteData, this.OnGetGooglePlayKey, this.OnUpdateGooglePlayKey);
+            m_GooglePlayDataRef = GoogleConfigService.Instance().GoogleConfigData;
+            m_WebRequests = new GoogleConfigurationWebRequests(m_GooglePlayDataRef, this.OnGetGooglePlayKey, this.OnUpdateGooglePlayKey);
 
             m_ObfuscatorSection = new GoogleObfuscatorSection(m_GooglePlayDataRef);
         }
@@ -66,13 +66,26 @@ namespace UnityEditor.Purchasing
 
         void ObtainExistingGooglePlayKey()
         {
-            m_WebRequests.RequestRetrieveKeyOperation();
+            if (m_GooglePlayDataRef.revenueTrackingState != GooglePlayRevenueTrackingKeyState.Verified)
+            {
+                m_WebRequests.RequestRetrieveKeyOperation();
+            }
+            else
+            {
+                SetGooglePlayKeyText(m_GooglePlayDataRef.googlePlayKey);
+                ToggleGoogleKeyStateDisplay();
+            }
         }
 
         void SetupButtonActions()
         {
             m_ConfigurationBlock.Q<Button>(k_UpdateGooglePlayKeyBtn).clicked += UpdateGooglePlayKey;
-            m_ConfigurationBlock.Q<Button>(k_GooglePlayLink).clicked += OpenGooglePlayDevConsole;
+            var googlePlayExternalLink = m_ConfigurationBlock.Q(k_GooglePlayLink);
+            if (googlePlayExternalLink != null)
+            {
+                var clickable = new Clickable(OpenGooglePlayDevConsole);
+                googlePlayExternalLink.AddManipulator(clickable);
+            }
 
             m_ConfigurationBlock.Q<TextField>(k_GooglePlayKeyEntry).RegisterValueChangedCallback(evt => {
                 m_GooglePlayDataRef.googlePlayKey = evt.newValue;
@@ -165,7 +178,7 @@ namespace UnityEditor.Purchasing
             if (!string.IsNullOrEmpty(key))
             {
                 m_GooglePlayDataRef.revenueTrackingState = GooglePlayRevenueTrackingKeyState.Verified;
-                m_ConfigurationBlock.Q<TextField>(k_GooglePlayKeyEntry).SetValueWithoutNotify(key);
+                SetGooglePlayKeyText(key);
             }
             else
             {
@@ -173,6 +186,11 @@ namespace UnityEditor.Purchasing
             }
 
             ToggleGoogleKeyStateDisplay();
+        }
+
+        void SetGooglePlayKeyText(string key)
+        {
+            m_ConfigurationBlock.Q<TextField>(k_GooglePlayKeyEntry).SetValueWithoutNotify(key);
         }
 
         void OnUpdateGooglePlayKey(GooglePlayRevenueTrackingKeyState keyState)

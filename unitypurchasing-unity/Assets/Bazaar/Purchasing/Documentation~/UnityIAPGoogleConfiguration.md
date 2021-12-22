@@ -1,8 +1,8 @@
-#Configuring for Google Play Store
+# How to Set Up
 
 ## Introduction
 
-This guide describes the process of establishing the digital records and relationships necessary for a Unity game to interact with an In-App Purchase Store. The [Unity IAP](UnityIAP) purchasing API is targeted. 
+This guide describes the process of establishing the digital records and relationships necessary for a Unity game to interact with an In-App Purchase Store. 
 
 In-App Purchase (IAP) is the process of transacting money for digital goods. A platform's Store allows the purchase of Products, representing digital goods. These Products have an Identifier, typically of string datatype. Products have Types to represent their durability: _subscription_, _consumable_ (capable of being rebought), and _non-consumable_ (capable of being bought once) are the most common. 
 
@@ -10,17 +10,17 @@ In-App Purchase (IAP) is the process of transacting money for digital goods. A p
 
 ### Getting Started
 
-1. Write a game implementing Unity IAP. See [Unity IAP Initialization](UnityIAPInitialization) and [the Sample IAP Project](https://forum.unity.com/threads/sample-iap-project.529555/).
+1. Write a game implementing Unity IAP. See [Unity IAP Initialization](Overview.md) and [the Sample IAP Project](https://forum.unity.com/threads/sample-iap-project.529555/).
 
-2. Keep the game's product identifiers on-hand for [Google Play](UnityIAPGooglePlay) Developer Console use later. 
+2. Keep the game's product identifiers on-hand for Google Play Developer Console use later. 
 
     ![gold50](images/IAPGoogleImage0.png)
 
-3. Build a [signed non-Development Build Android APK](android) from your game. 
+3. Build a signed non-Development Build Android APK from your game. 
 
     **TIP:** Make sure you safely store your keystore file. The original keystore is always required to update a published Google Play application. 
 
-    **TIP:** Reuse the Bundle Version Code from your last uploaded APK during local testing to permit side-loading without first being required to upload the changed APK to the Developer Console. See the settings for the [Android platform Player](class-PlayerSettingsAndroid).
+    **TIP:** Reuse the Bundle Version Code from your last uploaded APK during local testing to permit side-loading without first being required to upload the changed APK to the Developer Console. See the settings for the Android platform Player.
 
 ### Register the Application
 

@@ -49,7 +49,7 @@ namespace UnityEngine.Purchasing
                         // Switch Android callbacks to the scripting thread, via ScriptingUnityCallback.
                         var proxy = new JavaBridge(new ScriptingUnityCallback(callback, util));
                         var instance = pluginClass.CallStatic<AndroidJavaObject>("instance", proxy);
-                        // Hook up our amazon specific functionality.
+                        // Hook up our cafebazaar specific functionality.
                         var extensions = new CafebazaarStoreExtensions(instance);
                         return new AndroidJavaStore(instance);
                     }

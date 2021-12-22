@@ -33,11 +33,9 @@ namespace UnityEditor.Purchasing {
         internal static AndroidTargetChange OnAndroidTargetChange;
 
         private static readonly bool s_udpAvailable = UdpSynchronizationApi.CheckUdpAvailability();
-        #if ENABLE_EDITOR_GAME_SERVICES
         internal const string MenuItemRoot = "Services/" + PurchasingDisplayName;
         internal const string PurchasingDisplayName = "In-App Purchasing";
-        #else
-        #endif
+
         // Check if UDP upm package is installed.
         internal static bool IsUdpUmpPackageInstalled()
         {
@@ -171,6 +169,8 @@ namespace UnityEditor.Purchasing {
             window.minSize = new Vector2(340, 180);
             window.Show();
         }
+#else
+        const string SwitchStoreMenuItem = IapMenuConsts.MenuItemRoot + "/Configure...";
 #endif
 
         private static AppStore GetAppStoreSafe()
@@ -334,7 +334,7 @@ namespace UnityEditor.Purchasing {
 
         // Run me to configure the project's set of Android stores before build
         [PostProcessSceneAttribute(0)]
-        private static void OnPostProcessScene()
+        internal static void OnPostProcessScene()
         {
             if (File.Exists(ModePath))
             {

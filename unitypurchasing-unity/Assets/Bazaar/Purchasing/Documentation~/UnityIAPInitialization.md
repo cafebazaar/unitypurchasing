@@ -1,5 +1,4 @@
-Initialization
-==============
+# Initialization
 
 You must provide an implementation of the ``IStoreListener`` interface which Unity IAP uses to inform your application of purchase-related events.
 
@@ -67,3 +66,11 @@ public class MyIAPManager : IStoreListener {
 }
 ````
 
+### Automatically initializing `UnityPurchasing`
+The IAP SDK must initialize in order for in-app purchasing to work. This occurs automatically when the first instance of a Codeless __IAP Button__ or [__IAP Listener__](IAPListener.md) loads at run time. However, you may need to initialize the SDK before an IAP Button or IAP Listener appears in your game. In these cases, check __Automatically initialize UnityPurchasing (recommended)__ at the bottom of the __IAP Catalog__ window. This ensures that [```UnityPurchasing```](xref:UnityEngine.Purchasing.UnityPurchasing) initializes immediately when the application starts, and eliminates dependencies on the codeless instances’ lifecycles.
+
+![Enabling auto-initialization for the SDK through the **IAP Catalog** GUI](images/AutoInitialize.png)
+
+In order to work, your catalog must contain at least one Product.
+
+**Note**: You can use auto-initialize together with IAP Buttons or Listeners. In this case, the SDK initializes when the game starts instead of when the first instance of an IAP Button or Listener loads in the Scene. However, you should not enable auto-initialize if you also initialize manually in a script, as this may cause errors.

@@ -1,8 +1,8 @@
-#Configuring for Apple App Store and Mac App Store
+# How to Set Up
 
 ## Introduction
 
-This guide describes the process of establishing the digital records and relationships necessary for a Unity game to interact with an In-App Purchase Store. The [Unity IAP](index.md) purchasing API is targeted. 
+This guide describes the process of establishing the digital records and relationships necessary for a Unity game to interact with an In-App Purchase Store.
 
 In-App Purchase (IAP) is the process of transacting money for digital goods. A platform's Store allows purchase of Products, representing digital goods. These Products have an Identifier, typically of string datatype. Products have Types to represent their durability: _subscription_, _consumable_ (capable of being rebought), and _non-consumable_ (capable of being bought only once) are the most common. 
 
@@ -10,9 +10,9 @@ In-App Purchase (IAP) is the process of transacting money for digital goods. A p
 
 ### Getting Started
 
-1. Write a game implementing Unity IAP. See [Unity IAP Initialization](UnityIAPInitialization.md).
+1. Write a game implementing Unity IAP. See [Unity IAP Initialization](Overview.md).
 
-1. Keep the game's product identifiers on-hand for use in iTunes Connect later.
+1. Keep the game's product identifiers on-hand for use in App Store Connect later.
 
     ![](images/IAPAppleImage0.png)
 
@@ -23,12 +23,12 @@ In-App Purchase (IAP) is the process of transacting money for digital goods. A p
 2. Add a new App ID to create a fundamental application entity with Apple. 
     
     **NOTE:** Use an Explicit App ID. Wildcard App IDs (com.example.*) cannot be used for applications that use In-App Purchases.
-    
-    **NOTE:** The App ID is available to use in iTunes Connect after you create it in the Developer Center.
+
+    **NOTE:** The App ID is available to use in App Store Connect after you create it in the Developer Center.
   
     ![](images/IAPAppleImage1.png)
 
-3. Navigate to [iTunes Connect](https://itunesconnect.apple.com) and create an App, to establish a Store relationship with your game. 
+3. Navigate to [App Store Connect](https://itunesconnect.apple.com) and create an App, to establish a Store relationship with your game. 
   
     ![](images/IAPAppleImage2.png) 
 
@@ -43,7 +43,7 @@ In-App Purchase (IAP) is the process of transacting money for digital goods. A p
     ![](images/IAPAppleImage4.png)
 
 
-2. Choose a [Product Type](UnityIAPDefiningProducts.md). 
+2. Choose a [Product Type](DefiningProductsOverview.md#Product-Type). 
 
     ![](images/IAPAppleImage5.png)
 
@@ -61,9 +61,7 @@ In-App Purchase (IAP) is the process of transacting money for digital goods. A p
 
 ### Test IAP
 
-1. Create __Sandbox Testers__ using iTunes Connect for use on your test device's iTunes Account. To do this, navigate to __iTunes Connect &gt; Users and Roles__, and choose the plus ("+") button. You must review [Apple's Sandbox Tester documentation](https://developer.apple.com/library/ios/documentation/LanguagesUtilities/Conceptual/iTunesConnect_Guide/Chapters/SettingUpUserAccounts.html#/apple_ref/doc/uid/TP40011225-CH25-SW9) as there are several additional important usage notes, and you must use a real email address to create Testers. 
-
-    **NOTE:** See the [iOS and Mac App Store guides](UnityIAPiOSMAS.md) for additional details. 
+1. Create __Sandbox Testers__ using App Store Connect for use on your test device's iTunes Account. To do this, navigate to __App Store Connect &gt; Users and Roles__, and choose the plus ("+") button. You must review [Apple's Sandbox Tester documentation](https://help.apple.com/app-store-connect/#/dev8b997bee1) as there are several additional important usage notes, and you must use a real email address to create Testers. 
     
     **TIP:** (*) To simplify managing the email address, use an email service capable of sub-addressing (emailaccount+subaddress@example.com) such as Gmail, iCloud, and Outlook.com. This allows one email account to receive email for multiple sub-addresses. 
 
@@ -75,7 +73,7 @@ In-App Purchase (IAP) is the process of transacting money for digital goods. A p
 
 3. Build the Xcode project for your game using Unity.
 
-    **NOTE:** Ensure the Bundle Identifier in Unity (**Edit** &gt; **Project Settings**, then select the **Other Settings** category, and navigate to the **Bundle Identifier** section) matches that used in iTunes Connect.
+    **NOTE:** Ensure the Bundle Identifier in Unity (**Edit** &gt; **Project Settings**, then select the **Other Settings** category, and navigate to the **Bundle Identifier** section) matches that used in App Store Connect.
 
 4. Then, in your game's Xcode project, ensure the Team (Project Navigator &gt; your game Target &gt; General &gt; Identity &gt; Team) is set to that of your Apple Developer account.
 

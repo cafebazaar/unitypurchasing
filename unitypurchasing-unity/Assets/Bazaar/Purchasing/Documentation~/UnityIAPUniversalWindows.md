@@ -1,6 +1,6 @@
-#Universal Windows Platform
+# Testing
 
-##Simulator
+## Simulator
 
 Unity IAP features support for Microsoft's In App Purchase simulator, which allows you to test IAP purchase flows on devices before publishing your application.
 

@@ -1,7 +1,6 @@
-Browsing Product Metadata
-=========================
+# Browsing Product Metadata
 
-Unity IAP retrieves localized product metadata during the initialization process, which you can access via the ``IStoreController``'s products field.
+Unity IAP retrieves localized product metadata during the initialization process, which you can access via the ``IStoreController`` products field.
 
 ````
 foreach (var product in controller.products.all) {

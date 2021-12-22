@@ -1,8 +1,8 @@
-#Configuring for Windows Store
+# How to Set Up
 
 ## Introduction
 
-This guide describes the process of establishing the digital records and relationships necessary for a Unity game to interact with an In-App Purchase Store. The [Unity IAP](UnityIAP) purchasing API is targeted. 
+This guide describes the process of establishing the digital records and relationships necessary for a Unity game to interact with an In-App Purchase Store.
 
 In-App Purchase (IAP) is the process of transacting money for digital goods. A platform's Store allows purchase of Products representing digital goods. These Products have an Identifier, typically of string datatype. Products have Types to represent their durability: _subscription_, _consumable_ (capable of being rebought), and _non-consumable_ (capable of being bought once) are the most common. 
 
@@ -20,7 +20,7 @@ This page covers local testing with the emulator and a simulated billing system,
 
 ### Getting started
 
-1. Write a game implementing Unity IAP. See [Unity IAP Initialization](UnityIAPInitialization) and [Integrating Unity IAP with your game](https://unity3d.com/learn/tutorials/topics/analytics/integrating-unity-iap-your-game-beta).
+1. Write a game implementing Unity IAP. See [Unity IAP Initialization](Overview.md).
 
 1. Keep the game's product identifiers on-hand for use in Microsoft's Windows Dev Center Dashboard to perform remote Windows Store testing later. 
 
@@ -30,7 +30,7 @@ This page covers local testing with the emulator and a simulated billing system,
 
 Microsoft offers a simulated billing system, permitting local testing of IAP. This removes the need to configure anything on the Windows Dev Center or communicate with the the Windows Store via the app for initial integration testing. 
 
-[Configuring local testing](http://docs.unity3d.com/Manual/UnityIAPUniversalWindows.html) is far simpler than for remote Store testing, although it requires temporary code changes to the app which need to be removed before app publication. 
+[Configuring local testing](UnityIAPUniversalWindows.md) is far simpler than for remote Store testing, although it requires temporary code changes to the app which need to be removed before app publication. 
 
 To test IAP locally:
 

@@ -1,5 +1,4 @@
-Initiating Purchases
-====================
+# Coded
 
 When the user wants to buy a product call the ``InitiatePurchase`` method of the ``IStoreController``, identifying the product the user wants to buy.
 
