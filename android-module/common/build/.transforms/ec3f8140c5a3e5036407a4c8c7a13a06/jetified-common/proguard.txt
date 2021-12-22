@@ -1,8 +1,0 @@
-# Add library specific ProGuard rules here.
-# These rules will be applied when the library is merged with others to form the APK's classes.jar.
-
-# Keep the AIDL interface
--keep class com.android.vending.billing.** { *; }
-
-# Keep the PBL public APIs
--keep class com.android.billingclient.api.** { *; }
