@@ -231,6 +231,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
 
     private String parsePrice(String price) {
         String[] pre = price.split(" ریال");
+        Log.i(TAG, pre.length + ";;;;;");
         String _price = pre[0]
                 .replace(",", "")
                 .replace('٠', '0')

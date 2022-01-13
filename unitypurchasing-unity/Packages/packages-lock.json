@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.nosuchstudio.rtltmpro": {
+      "version": "3.4.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.unity.collab-proxy": {
       "version": "1.2.16",
       "depth": 0,
@@ -42,7 +49,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "2.1.1",
+      "version": "2.1.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
