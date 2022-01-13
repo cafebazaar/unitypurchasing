@@ -42,6 +42,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
         SkuDetailsResponseListener, PurchasesUpdatedListener {
 
     public static String TAG = "FarsiSell";
+    private static boolean debugMode = false;
     public static IStoreCallback unityCallback;
     private static CafebazaarPurchasing instance;
 
@@ -52,6 +53,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
     private Map<String, ProductDefinition> definedProducts;
 
     public static void log(String message) {
+        if (debugMode)
         Log.i(TAG, message);
     }
 
