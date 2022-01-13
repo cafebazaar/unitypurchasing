@@ -38,13 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class CafebazaarPurchasing implements PurchasesResponseListener, BillingClientStateListener,
+public class BazaarPurchasing implements PurchasesResponseListener, BillingClientStateListener,
         SkuDetailsResponseListener, PurchasesUpdatedListener {
 
     public static String TAG = "FarsiSell";
     private static boolean debugMode = false;
     public static IStoreCallback unityCallback;
-    private static CafebazaarPurchasing instance;
+    private static BazaarPurchasing instance;
 
     private final BillingClient billingClient;
     private String pendingJsonProducts = null;
@@ -57,9 +57,9 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
         Log.i(TAG, message);
     }
 
-    public static CafebazaarPurchasing instance(IUnityCallback bridge) {
+    public static BazaarPurchasing instance(IUnityCallback bridge) {
         if (instance == null) {
-            instance = new CafebazaarPurchasing(new UnityPurchasing(bridge));
+            instance = new BazaarPurchasing(new UnityPurchasing(bridge));
         }
         return instance;
     }
@@ -80,10 +80,8 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
         return null;
     }
 
-    public CafebazaarPurchasing(IStoreCallback callback) {
+    public BazaarPurchasing(IStoreCallback callback) {
         unityCallback = callback;
-        Context context = getActivity().getApplicationContext();
-
         billingClient = BillingClient.newBuilder(getActivity().getApplication()).setListener(this).enablePendingPurchases().build();
         billingClient.startConnection(this);
     }
@@ -105,6 +103,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
     }
 
     public void RetrieveProducts(String json) {
+        log("RetrieveProducts " + json);
         pendingJsonProducts = json;
         if (!billingClient.isReady) {
             unityCallback.OnSetupFailed(InitializationFailureReason.NoProductsAvailable);
@@ -191,7 +190,7 @@ public class CafebazaarPurchasing implements PurchasesResponseListener, BillingC
         ProductDefinition product = getProductFromJson(productJSON);
         if (product == null) {
             PurchaseFailureDescription description = new PurchaseFailureDescription("", PurchaseFailureReason.BillingUnavailable, "Json is invalid.", "");
-            CafebazaarPurchasing.unityCallback.OnPurchaseFailed(description);
+            BazaarPurchasing.unityCallback.OnPurchaseFailed(description);
             return;
         }
         BillingResult billingResult = billingClient.launchBillingFlow(getActivity(),

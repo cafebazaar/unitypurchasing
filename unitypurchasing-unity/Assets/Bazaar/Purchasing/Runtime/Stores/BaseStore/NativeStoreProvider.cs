@@ -44,7 +44,7 @@ namespace UnityEngine.Purchasing
                     }
 
                  case AppStore.Cafebazaar:
-                    using (var pluginClass = new AndroidJavaClass("com.farsitel.bazaar.CafebazaarPurchasing"))
+                    using (var pluginClass = new AndroidJavaClass("com.farsitel.bazaar.BazaarPurchasing"))
                     {
                         // Switch Android callbacks to the scripting thread, via ScriptingUnityCallback.
                         var proxy = new JavaBridge(new ScriptingUnityCallback(callback, util));
