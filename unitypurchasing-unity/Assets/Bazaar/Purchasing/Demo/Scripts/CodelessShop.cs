@@ -1,12 +1,11 @@
-using System;
+﻿using System;
 using RTLTMPro;
 using UnityEngine;
 
 public class CodelessShop : MonoBehaviour
 {
-    [SerializeField] private Vehicle vehicle;
-    [SerializeField] private RTLTextMeshPro ConsoleText;
-
+    [SerializeField] protected Vehicle vehicle;
+    [SerializeField] protected RTLTextMeshPro consoleText;
 
     public void UpdateStats(String productId)
     {
@@ -21,12 +20,12 @@ public class CodelessShop : MonoBehaviour
             case "premium":
                 vehicle.SetSkin(1);
                 break;
-            default: return;
         }
     }
-    public void Log(string message)
+
+    protected void Log(string message)
     {
-        ConsoleText.text = ConsoleText.OriginalText + message + "\n";
+        consoleText.text = consoleText.OriginalText + message + "\n";
     }
 
 }

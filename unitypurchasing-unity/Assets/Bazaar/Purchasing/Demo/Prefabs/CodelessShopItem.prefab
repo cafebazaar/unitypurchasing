@@ -426,10 +426,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5335292985589788861}
+  - component: {fileID: 5335292985589788857}
   - component: {fileID: 5335292985589788856}
   - component: {fileID: 5335292985589788863}
   - component: {fileID: 5335292985589788862}
-  - component: {fileID: -7716640341218445406}
   m_Layer: 0
   m_Name: ShopItem
   m_TagString: Untagged
@@ -460,6 +460,44 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 260}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5335292985589788857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5335292985589788860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6633b76f55892a04dbb4eea0c08da58c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  productId: 
+  buttonType: 0
+  consumePurchase: 1
+  onPurchaseComplete:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: UpdateStats
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: gas
+          m_BoolArgument: 0
+        m_CallState: 2
+  onPurchaseFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  titleText: {fileID: 0}
+  descriptionText: {fileID: 0}
+  priceText: {fileID: 0}
+  titleRTLText: {fileID: 5335292983842468432}
+  descriptionRTLText: {fileID: 5335292984779427696}
+  priceRTLText: {fileID: 5335292984335550108}
 --- !u!222 &5335292985589788856
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -539,41 +577,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5335292985589788863}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -7716640341218445406}
-        m_MethodName: OnClick
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &-7716640341218445406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5335292985589788860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecf3ea10fb5f0b24fae3a4c98d2d4329, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  icons:
-  - id: gas
-    sprite: {fileID: 21300000, guid: e187d34c959b33f4e97ada7fadcc16e9, type: 3}
-  - id: premium
-    sprite: {fileID: 21300000, guid: 856d7bf343efba8469b70606c5828c6b, type: 3}
-  - id: infinite_gas_monthly
-    sprite: {fileID: 21300000, guid: 06c0c7eb44d9353489c9ca24b20542cd, type: 3}
-  iconImage: {fileID: 5335292985689604496}
-  titleText: {fileID: 5335292983842468432}
-  descriptionText: {fileID: 5335292984779427696}
-  priceText: {fileID: 5335292984335550108}
+      m_Calls: []
 --- !u!1 &5335292985689604502
 GameObject:
   m_ObjectHideFlags: 0
