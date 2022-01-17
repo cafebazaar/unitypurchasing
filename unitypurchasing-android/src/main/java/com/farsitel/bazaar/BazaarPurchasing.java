@@ -231,8 +231,9 @@ public class BazaarPurchasing implements PurchasesResponseListener, BillingClien
     }
 
     private String parsePrice(String price) {
-        String[] pre = price.split(" ریال");
-        Log.i(TAG, pre.length + ";;;;;");
+        if (price.contains("صفر") || price.toLowerCase().contains("zero"))
+            return "0";
+        String[] pre = price.split(" ");
         String _price = pre[0]
                 .replace(",", "")
                 .replace('٠', '0')
@@ -245,8 +246,7 @@ public class BazaarPurchasing implements PurchasesResponseListener, BillingClien
                 .replace('٧', '7')
                 .replace('٨', '8')
                 .replace('٩', '9');
-
-        return _price.equals("صفر") ? "0" : _price;
+        return _price;
     }
 
     private ProductDefinition getProductFromJson(String productJSON) {
