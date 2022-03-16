@@ -49,4 +49,4 @@ If you use unity 2019 and older versions, find and open `bazaar-billing-x.x.x.aa
 <br/><br/>
 ><b>Attention!</b>
 >
-> Keep in mind, builds in these versions not support android 11+ devices.
+> Keep in mind, that builds in these versions, do not support android 11+ devices.
