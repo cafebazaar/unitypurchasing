@@ -44,6 +44,7 @@ public class BazaarPurchasing implements PurchasesResponseListener, BillingClien
     public static String TAG = "FarsiSell";
     private static boolean debugMode = false;
     public static IStoreCallback unityCallback;
+    public static Activity testActivity;
     private static BazaarPurchasing instance;
 
     private final BillingClient billingClient;
@@ -54,7 +55,7 @@ public class BazaarPurchasing implements PurchasesResponseListener, BillingClien
 
     public static void log(String message) {
         if (debugMode)
-        Log.i(TAG, message);
+            Log.i(TAG, message);
     }
 
     public static BazaarPurchasing instance(IUnityCallback bridge) {
@@ -65,6 +66,9 @@ public class BazaarPurchasing implements PurchasesResponseListener, BillingClien
     }
 
     public Activity getActivity() {
+        if (testActivity != null) {
+            return testActivity;
+        }
         try {
             // Using reflection to remove reference to Unity library.
             Class<?> mUnityPlayerClass = Class.forName("com.unity3d.player.UnityPlayer");
@@ -223,11 +227,11 @@ public class BazaarPurchasing implements PurchasesResponseListener, BillingClien
             return;
         }
         Purchase purchase = purchasesMap.get(product.id);
-                ConsumeParams consumeParams = ConsumeParams.newBuilder()
-                        .setPurchaseToken(purchase.getPurchaseToken()).build();
-                billingClient.consumeAsync(consumeParams, (consumeResult, outToken) -> {
+        ConsumeParams consumeParams = ConsumeParams.newBuilder()
+                .setPurchaseToken(purchase.getPurchaseToken()).build();
+        billingClient.consumeAsync(consumeParams, (consumeResult, outToken) -> {
             log("Consume " + productJSON + " - " + consumeResult);
-                });
+        });
     }
 
     private String parsePrice(String price) {
