@@ -3,9 +3,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEditor.Connect;
 using UnityEngine;
 using UnityEngine.Purchasing;
-using static UnityEditor.Purchasing.UnityPurchasingEditor;
 
 namespace UnityEditor.Purchasing
 {
@@ -39,7 +39,8 @@ namespace UnityEditor.Purchasing
         {
             EditorWindow.GetWindow(typeof(ProductCatalogEditor));
 
-            GenericEditorMenuItemClickEventSenderHelpers.SendTopMenuOpenCatalogEvent();
+            GenericEditorMenuItemClickEventSenderHelpers.SendIapMenuOpenCatalogEvent();
+            GameServicesEventSenderHelpers.SendTopMenuIapCatalogEvent();
         }
 
         private static GUIContent windowTitle = new GUIContent("IAP Catalog");
@@ -447,29 +448,18 @@ namespace UnityEditor.Purchasing
                 return;
             }
 
-            ReqStruct reqStruct = requestQueue.Dequeue();
-            object request = reqStruct.request;
-            GeneralResponse resp = reqStruct.resp;
+            var reqStruct = requestQueue.Dequeue();
+            var request = reqStruct.request;
+            var resp = reqStruct.resp;
 
-            if (request != null && UdpSynchronizationApi.IsUnityWebRequestDone(request)) // Check what the request is and parse the response
+            if (request != null && request.isDone) // Check what the request is and parse the response
             {
-                // Deal with errors
-                if (UdpSynchronizationApi.UnityWebRequestError(request) != null || UdpSynchronizationApi.UnityWebRequestResponseCode(request)/100 != 2)
-                {
+                var downloadedRawJson = request.downloadHandler.text;
 
-                    ErrorResponse response = JsonUtility.FromJson<ErrorResponse>(UdpSynchronizationApi.UnityWebRequestResultString(request));
-                    if (response?.message != null && response.details != null && response.details.Length != 0)
-                    {
-                        kUdpErrorMsg = string.Format("{0} : {1}", response.details[0].field, response.message);
-                    }
-                    else if (response?.message != null)
-                    {
-                        kUdpErrorMsg = response.message;
-                    }
-                    else
-                    {
-                        kUdpErrorMsg = "Unknown Error, Please try again";
-                    }
+                // Deal with errors
+                if (request.error != null || (request.responseCode / 100) != 2)
+                {
+                    TryParseErrorAsJson(downloadedRawJson, request.responseCode);
 
                     if (reqStruct.itemEditor != null)
                     {
@@ -484,12 +474,12 @@ namespace UnityEditor.Purchasing
                 {
                     if (resp.GetType() == typeof(TokenInfo))
                     {
-                        resp = JsonUtility.FromJson<TokenInfo>(UdpSynchronizationApi.UnityWebRequestResultString(request));
+                        resp = JsonUtility.FromJson<TokenInfo>(downloadedRawJson);
                         kTokenInfo.access_token = ((TokenInfo) resp).access_token;
                         kTokenInfo.refresh_token = ((TokenInfo) resp).refresh_token;
 
                         var newRequest =
-                            UdpSynchronizationApi.GetOrgId(kTokenInfo.access_token, Application.cloudProjectId);
+                            UdpSynchronizationApi.CreateGetOrgIdRequest(kTokenInfo.access_token, Application.cloudProjectId);
                         ReqStruct newReqStruct = new ReqStruct {request = newRequest, resp = new OrgIdResponse()};
 
                         requestQueue.Enqueue(newReqStruct);
@@ -497,7 +487,7 @@ namespace UnityEditor.Purchasing
                     // Get orgId request
                     else if (resp.GetType() == typeof(OrgIdResponse))
                     {
-                        resp = JsonUtility.FromJson<OrgIdResponse>(UdpSynchronizationApi.UnityWebRequestResultString(request));
+                        resp = JsonUtility.FromJson<OrgIdResponse>(downloadedRawJson);
                         kOrgId = ((OrgIdResponse) resp).org_foreign_key;
 
             			if (kAppStoreSettings != null)
@@ -507,17 +497,16 @@ namespace UnityEditor.Purchasing
                         	// Then, get all iap items
                         	requestQueue.Enqueue(new ReqStruct
                         	{
-                        	    request = UdpSynchronizationApi.SearchStoreItem(kTokenInfo.access_token, kOrgId, (string)appSlug.GetValue(kAppStoreSettings)),
+                        	    request = UdpSynchronizationApi.CreateSearchStoreItemRequest(kTokenInfo.access_token, kOrgId, (string)appSlug.GetValue(kAppStoreSettings)),
                         	    resp = new IapItemSearchResponse()
                         	});
 						}
                     }
-
                     else if (resp.GetType() == typeof(IapItemSearchResponse))
                     {
-                        if (UdpSynchronizationApi.UnityWebRequestResultString(request) != null)
+                        if (downloadedRawJson != null)
                         {
-                            resp = JsonUtility.FromJson<IapItemSearchResponse>(UdpSynchronizationApi.UnityWebRequestResultString(request));
+                            resp = JsonUtility.FromJson<IapItemSearchResponse>(downloadedRawJson);
                             foreach (var item in ((IapItemSearchResponse) resp).results)
                             {
                                 kIapItems[item.slug] = item;
@@ -529,7 +518,7 @@ namespace UnityEditor.Purchasing
                     // Creating/Updating IAP item succeeds
                     else if (resp.GetType() == typeof(IapItemResponse))
                     {
-                        resp = JsonUtility.FromJson<IapItemResponse>(UdpSynchronizationApi.UnityWebRequestResultString(request));
+                        resp = JsonUtility.FromJson<IapItemResponse>(downloadedRawJson);
 
                         if (reqStruct.iapItem != null) // this should always be true
                         {
@@ -547,6 +536,29 @@ namespace UnityEditor.Purchasing
             }
         }
 
+        void TryParseErrorAsJson(string downloadedRawJson, long responseCode)
+        {
+            try
+            {
+                var response = JsonUtility.FromJson<ErrorResponse>(downloadedRawJson);
+                if (response?.message != null && response.details != null && response.details.Length != 0)
+                {
+                    kUdpErrorMsg = string.Format("{0} : {1}", response.details[0].field, response.message);
+                }
+                else if (response?.message != null)
+                {
+                    kUdpErrorMsg = response.message;
+                }
+                else
+                {
+                    kUdpErrorMsg = $"Unknown Error, Please try again. Error code: {responseCode}";
+                }
+            }
+            catch (ArgumentException)
+            {
+                kUdpErrorMsg = $"Unable to parse Error as JSON, Please try again. Error code: {responseCode}";
+            }
+        }
 
 
         /// <summary>
@@ -571,19 +583,9 @@ namespace UnityEditor.Purchasing
                 }
             }
 
-            // Using reflection to get AuthCode to avoid
-            Type unityOAuthType = UdpSynchronizationApi.GetUnityOAuthType();
-            Type authCodeResponseType = unityOAuthType.GetNestedType("AuthCodeResponse", BindingFlags.Public);
-            var performMethodInfo =
-                typeof(ProductCatalogEditor).GetMethod("GetAuthCode").MakeGenericMethod(authCodeResponseType);
-            var actionT =
-                typeof(Action<>).MakeGenericType(authCodeResponseType); // Action<UnityOAuth.AuthCodeResponse>
-            var getAuthorizationCodeAsyncMethodInfo = unityOAuthType.GetMethod("GetAuthorizationCodeAsync");
-            var performDelegate = Delegate.CreateDelegate(actionT, this, performMethodInfo);
             try
             {
-                getAuthorizationCodeAsyncMethodInfo.Invoke(null,
-                    new object[] {UdpSynchronizationApi.kOAuthClientId, performDelegate});
+                UnityOAuth.GetAuthorizationCodeAsync(UdpSynchronizationApi.kOAuthClientId, GetAuthCode);
             }
             catch (TargetInvocationException ex)
             {
@@ -610,7 +612,7 @@ namespace UnityEditor.Purchasing
 
             if (authCode != null)
             {
-                object request = UdpSynchronizationApi.GetAccessToken(authCode);
+                var request = UdpSynchronizationApi.CreateGetAccessTokenRequest(authCode);
                 TokenInfo tokenInfoResp = new TokenInfo();
                 ReqStruct reqStruct = new ReqStruct {request = request, resp = tokenInfoResp};
                 requestQueue.Enqueue(reqStruct);
@@ -952,7 +954,7 @@ namespace UnityEditor.Purchasing
                                         {
                                             resp = new IapItemResponse(),
                                             itemEditor = this,
-                                            request = UdpSynchronizationApi.UpdateStoreItem(kTokenInfo.access_token,
+                                            request = UdpSynchronizationApi.CreateUpdateStoreItemRequest(kTokenInfo.access_token,
                                                 iapItem),
                                             iapItem = iapItem,
                                         });
@@ -961,7 +963,7 @@ namespace UnityEditor.Purchasing
                                     {
                                         requestQueue.Enqueue(new ReqStruct
                                         {
-                                            request = UdpSynchronizationApi.CreateStoreItem(kTokenInfo.access_token,
+                                            request = UdpSynchronizationApi.CreateAddStoreItemRequest(kTokenInfo.access_token,
                                                 kOrgId, iapItem),
                                             resp = new IapItemResponse(),
                                             itemEditor = this,
