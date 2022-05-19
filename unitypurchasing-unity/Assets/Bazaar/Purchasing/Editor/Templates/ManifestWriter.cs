@@ -28,6 +28,23 @@ class ManifestWriter : IPreprocessBuildWithReport
         var androidManifestPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets", "Plugins", "Android", "AndroidManifest.xml");
         File.WriteAllText(androidManifestPath, manifest);
 
+        var storesPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets", "Bazaar", "Purchasing", "Plugins", "UnityPurchasing", "Android", "Stores");
+        var storesDir = new DirectoryInfo(storesPath);
+        foreach (var store in storesDir.GetFiles())
+        {
+            store.Delete();
+        }
+        if (storeData.aarFiles != null)
+        {
+            foreach (var aar in storeData.aarFiles)
+            {
+                var storeName = aar + ".aar";
+                var sourceFile = Path.Combine(thisScriptDir, storeName);
+                var destFile = Path.Combine(storesDir.FullName, storeName);
+                File.Copy(sourceFile, destFile);
+                Debug.Log(sourceFile);
+                Debug.Log(destFile);
+            }
         }
     }
 }
