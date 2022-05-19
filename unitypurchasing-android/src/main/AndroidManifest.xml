@@ -1,9 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.farsitel.bazaar">
-    <uses-permission android:name="com.farsitel.bazaar.permission.PAY_THROUGH_BAZAAR" />
-    <application>
-        <activity android:name="com.android.wrapper.WrapperBillingActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
-    </application>
-</manifest>
+<manifest package="com.farsitel.bazaar" />
