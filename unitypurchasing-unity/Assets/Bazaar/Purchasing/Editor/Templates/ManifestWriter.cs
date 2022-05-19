@@ -25,10 +25,24 @@ class ManifestWriter : IPreprocessBuildWithReport
         manifest = manifest.Replace("___MarketPermissions___", storeData.manifestPermission);
         manifest = manifest.Replace("___MarketActivities___", storeData.manifestActivity);
         manifest = manifest.Replace("___MarketReceivers___", storeData.manifestReceiver);
-        var androidManifestPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets", "Plugins", "Android", "AndroidManifest.xml");
-        File.WriteAllText(androidManifestPath, manifest);
 
-        var storesPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets", "Bazaar", "Purchasing", "Plugins", "UnityPurchasing", "Android", "Stores");
+        // Generate Plugins/Android/AndroidManifest.xml
+        var pluginsDir = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Plugins"));
+        if (!pluginsDir.Exists)
+        {
+            pluginsDir.Create();
+        }
+
+        var androidDir = new DirectoryInfo(Path.Combine(pluginsDir.FullName, "Android"));
+        if (!androidDir.Exists)
+        {
+            androidDir.Create();
+        }
+
+        File.WriteAllText(Path.Combine(androidDir.FullName, "AndroidManifest.xml"), manifest);
+
+        // Provide appropriate aar files
+        var storesPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Bazaar", "Purchasing", "Plugins", "UnityPurchasing", "Android", "Stores");
         var storesDir = new DirectoryInfo(storesPath);
         if (!storesDir.Exists)
         {
@@ -39,7 +53,7 @@ class ManifestWriter : IPreprocessBuildWithReport
         {
             store.Delete();
         }
-        
+
         if (storeData.aarFiles != null)
         {
             foreach (var aar in storeData.aarFiles)
