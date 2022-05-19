@@ -30,10 +30,16 @@ class ManifestWriter : IPreprocessBuildWithReport
 
         var storesPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Assets", "Bazaar", "Purchasing", "Plugins", "UnityPurchasing", "Android", "Stores");
         var storesDir = new DirectoryInfo(storesPath);
+        if (!storesDir.Exists)
+        {
+            storesDir.Create();
+        }
+
         foreach (var store in storesDir.GetFiles())
         {
             store.Delete();
         }
+        
         if (storeData.aarFiles != null)
         {
             foreach (var aar in storeData.aarFiles)
